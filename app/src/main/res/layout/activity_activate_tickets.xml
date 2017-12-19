@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activateTicketsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivateTicketsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activateTicketsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <com.example.ritziercard9.projectjanus.CustomVerticalStepperFormLayout
+        android:id="@+id/activate_tickets_stepper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/activateTicketsToolbar" />
+</RelativeLayout>

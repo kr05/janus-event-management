@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF263238</color>
+    <color name="colorPrimaryDark">#61000000</color>
+    <color name="colorAccent">#ff5722</color>
+    <color name="background">#37474f</color>
+    <color name="textColor">#f9f9f9</color>
+
+    <color name="saleIconBackgroundColor">#fafafa</color>
+
+
+
+    <color name="iconBackground">#ff8a50</color>
+    <color name="divider_color">#1FFFFFFF</color>
+    <color name="summary_stepper_text_color">#ffffff</color>
+    <color name="spinner_popup_background_color">#FF4F5B62</color>
+    <color name="entryGreen">#2e7d32</color>
+
+
+</resources>
