@@ -1,7 +1,9 @@
 package com.example.ritziercard9.projectjanus;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ public class EventDetails extends AppCompatActivity {
     private Query query;
     private FirestoreRecyclerOptions<SingleTicket> options;
     private String uid;
+    private String sellerUid;
 
     private static final int ACTIVATE_TICKETS_REQUEST = 1;
 
@@ -86,10 +89,11 @@ public class EventDetails extends AppCompatActivity {
         }
 
         uid = bundle.getString("UID");
+        sellerUid = bundle.getString("sellerUID");
 
         setupTicketRecyclerView(uid);
 
-        final DocumentReference docRef = db.document("events/" + uid);
+        final DocumentReference docRef = db.document("sellers/" + sellerUid + "/events/" + uid);
         docRef.addSnapshotListener((snapshot, e) -> {
             if (e != null) {
                 Log.w(TAG, "Listen failed.", e);
@@ -120,6 +124,16 @@ public class EventDetails extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.eventDetailsContainer), ticketActivationToastText, Snackbar.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void onPrepareSupportNavigateUpTaskStack(@NonNull TaskStackBuilder builder) {
+        builder.editIntentAt(builder.getIntentCount() - 1).putExtra("sellerUID", sellerUid);
+    }
+
+    @Override
+    public boolean supportShouldUpRecreateTask(@NonNull Intent targetIntent) {
+        return true;
     }
 
     private void setupTicketRecyclerView(String uid) {
@@ -196,9 +210,12 @@ public class EventDetails extends AppCompatActivity {
         titleTextView.setText(data.get("title").toString());
         locationTextView.setText(data.get("location").toString());
         dateTextView.setText(data.get("date").toString());
-        Glide.with(getApplicationContext())
-                .load(data.get("image").toString())
-                .into(detailsImageView);
+
+        if (data.get("image") != null) {
+            Glide.with(getApplicationContext())
+                    .load(data.get("image").toString())
+                    .into(detailsImageView);
+        }
     }
 
     public void onEscanearClick(View view) {
@@ -231,6 +248,7 @@ public class EventDetails extends AppCompatActivity {
         bundle.putString("ticketTotal", REAL_FORMATTER.format(ticketTotal));
         bundle.putString("uid", uid);
         bundle.putString("ticketUID", ticketUID);
+        bundle.putString("sellerUID", sellerUid);
         intent.putExtras(bundle);
 
         Log.d(TAG, "onEscanearClick: BUNDLE:" + bundle);

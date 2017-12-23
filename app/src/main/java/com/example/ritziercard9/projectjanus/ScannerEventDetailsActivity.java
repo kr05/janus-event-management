@@ -98,7 +98,7 @@ public class ScannerEventDetailsActivity extends AppCompatActivity {
                 Log.d(TAG, "Current data: null");
                 Map<String, Object> defaultVal = new HashMap<>();
                 defaultVal.put("value", 0);
-                docRef.set(defaultVal);
+                checkedInRef.set(defaultVal);
             }
         });
     }
@@ -131,10 +131,11 @@ public class ScannerEventDetailsActivity extends AppCompatActivity {
             totalCapacityTextView.setText(data.get("capacity").toString());
         }
 
-
-        Glide.with(getApplicationContext())
-                .load(data.get("image").toString())
-                .into(detailsImageView);
+        if (data.get("image") != null) {
+            Glide.with(getApplicationContext())
+                    .load(data.get("image").toString())
+                    .into(detailsImageView);
+        }
     }
 
 }

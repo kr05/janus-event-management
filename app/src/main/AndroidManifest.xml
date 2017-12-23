@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ritziercard9.projectjanus">
 
+    <uses-permission android:name="android.permission.NFC" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,29 +11,52 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
         <activity
             android:name=".EventsListActivity"
-            android:label="Eventos"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".EventDetails" android:parentActivityName=".EventsListActivity"/>
-        <activity android:name=".ActivateTicketsActivity" android:label="Activación" android:parentActivityName=".EventDetails"/>
+            android:label="Venta de boletos" />
+        <activity
+            android:name=".EventDetails"
+            android:parentActivityName=".EventsListActivity" />
+        <activity
+            android:name=".ActivateTicketsActivity"
+            android:label="Activación"
+            android:parentActivityName=".EventDetails" />
         <activity
             android:name=".ScannerEventDetailsActivity"
             android:label="Detalles del evento"
             android:parentActivityName=".ScannerEventsListActivity" />
-        <activity android:name=".ValidateTicketsActivity" android:parentActivityName=".ScannerEventDetailsActivity"/>
+        <activity
+            android:name=".ValidateTicketsActivity"
+            android:parentActivityName=".ScannerEventDetailsActivity" />
         <activity
             android:name=".ScannerEventsListActivity"
-            android:label="Eventos"
-            android:parentActivityName=".MainActivity" />
+            android:label="Control de acceso" />
+        <activity
+            android:name=".OrganizerMainActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".OrganizerEventDetailsActivity"
+            android:parentActivityName=".OrganizerMainActivity" />
+        <activity
+            android:name=".NewEventActivity"
+            android:label="Crear evento"
+            android:parentActivityName=".OrganizerMainActivity" />
+        <activity
+            android:name=".OrganizerSellerDetailsActivity"
+            android:parentActivityName=".OrganizerMainActivity" />
+        <activity
+            android:name=".NewSellerActivity"
+            android:label="Crear vendedor"
+            android:parentActivityName=".OrganizerMainActivity" />
+        <activity android:name=".SellerAssignEventActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,10 @@
 package com.example.ritziercard9.projectjanus;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -49,15 +53,33 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
     private Button receiptButton, noReceiptButton;
     private ProgressBar activatingTicketsProgressBar;
 
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
 
     private CustomVerticalStepperFormLayout verticalStepperForm;
-    private String summaryTicketTitle, summaryTicketQuantity, summaryTicketTotal, ticketUID, uid;
+    private String summaryTicketTitle, summaryTicketQuantity, summaryTicketTotal, ticketUID, uid, sellerUID;
     private int summaryTicketQuantityInt;
+    private PendingIntent pendingIntent;
+    private NfcAdapter mAdapter;
+
+    //Custom method to convert bytes to String.
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activate_tickets);
+
+        onCreateSetupNfc();
+
 
         Toolbar myToolbar = findViewById(R.id.activateTicketsToolbar);
 
@@ -96,11 +118,47 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
                 .confirmationStepEnabled(false)
                 .finalStepNextButtonEnabled(false)
                 .init();
+
+    }
+
+    private void onCreateSetupNfc() {
+        pendingIntent = PendingIntent.getActivity(
+                this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+
+//        if (mAdapter != null && mAdapter.isEnabled()) {
+//        } else {
+//            finish();
+//        }
+    }
+
+    private void onResumeSetupNfc() {
+        IntentFilter[] intentFiltersArray = new IntentFilter[]{};
+        mAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        final String nfcId = bytesToHex(tagFromIntent.getId());
+
+        Log.d(TAG, "onNewIntent: " + nfcId);
+        Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boletos escaneado:" + nfcId, Snackbar.LENGTH_LONG).show();
+
+        addCounter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onResumeSetupNfc();
     }
 
     @Override
     public void onPrepareSupportNavigateUpTaskStack(@NonNull TaskStackBuilder builder) {
         builder.editIntentAt(builder.getIntentCount() - 1).putExtra("UID", uid);
+        builder.editIntentAt(builder.getIntentCount() - 1).putExtra("sellerUID", sellerUID);
     }
 
     @Override
@@ -118,6 +176,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         summaryTicketQuantityInt = Integer.parseInt(summaryTicketQuantity);
         summaryTicketTotal = extras.getString(TICKET_TOTAL_KEY);
         uid = extras.getString(UID);
+        sellerUID = extras.getString("sellerUID");
         ticketUID = extras.getString(TICKET_UID);
     }
 
@@ -270,7 +329,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
     }
 
-    public void addCounter(View view) {
+    public void addCounter() {
         counter++;
         updateScanningRemainingTicketsTextView(counter);
         checkScannedTickets();

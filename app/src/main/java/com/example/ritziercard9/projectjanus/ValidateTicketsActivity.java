@@ -1,9 +1,12 @@
 package com.example.ritziercard9.projectjanus;
 
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.drm.DrmStore;
-import android.graphics.Color;
+import android.content.IntentFilter;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -11,21 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,10 +37,27 @@ public class ValidateTicketsActivity extends AppCompatActivity {
     private Switch scannerTypeSwitch;
     private ActionBar ab;
 
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private PendingIntent pendingIntent;
+    private NfcAdapter mAdapter;
+
+    //Custom method to convert bytes to String.
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_validate_tickets);
+
+        onCreateSetupNfc();
 
         Toolbar myToolbar = findViewById(R.id.validateTicketsToolbar);
         setSupportActionBar(myToolbar);
@@ -61,6 +75,39 @@ public class ValidateTicketsActivity extends AppCompatActivity {
         setUpSwitch();
 
         setupEventListeners(getIntent().getExtras());
+    }
+
+    private void onCreateSetupNfc() {
+        pendingIntent = PendingIntent.getActivity(
+                this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (mAdapter != null && mAdapter.isEnabled()) {
+        } else {
+            finish();
+        }
+    }
+
+    private void onResumeSetupNfc() {
+        IntentFilter[] intentFiltersArray = new IntentFilter[]{};
+        mAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        final String nfcId = bytesToHex(tagFromIntent.getId());
+
+        Log.d(TAG, "onNewIntent: " + nfcId);
+
+        scanTicket();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onResumeSetupNfc();
     }
 
     private void setUpSwitch() {
@@ -102,7 +149,7 @@ public class ValidateTicketsActivity extends AppCompatActivity {
 
         uid = bundle.getString("UID");
 
-        final DocumentReference docRef = db.document("events/" + uid + "/counters/checkedIn");
+        DocumentReference docRef = db.document("events/" + uid + "/counters/checkedIn");
         docRef.addSnapshotListener((snapshot, e) -> {
             if (e != null) {
                 Log.w(TAG, "Listen failed.", e);
@@ -127,8 +174,11 @@ public class ValidateTicketsActivity extends AppCompatActivity {
         }
     }
 
-    public void onValidateImageClick(View view) {
+    public void scanTicket() {
         Log.d(TAG, "onValidateImageClick: CLICK");
+
+
+
         final DocumentReference checkedInDocRef = db.document("events/" + uid + "/counters/checkedIn");
 
         db.runTransaction(transaction -> {
@@ -150,7 +200,16 @@ public class ValidateTicketsActivity extends AppCompatActivity {
             }
 
         })
-        .addOnSuccessListener(result -> Log.d(TAG, "Transaction success:" + result))
+        .addOnSuccessListener(result -> {
+            Log.d(TAG, "Transaction success:" + result);
+            String scannerNotifText = "Boleto escaneado";
+            if (!scannerTypeSwitch.isChecked()) {
+                scannerNotifText += " para entrada: VALIDO";
+            } else {
+                scannerNotifText += " para salida: VALIDO";
+            }
+            Snackbar.make(findViewById(R.id.validateTicketsContainer), scannerNotifText, Snackbar.LENGTH_INDEFINITE).show();
+        })
         .addOnFailureListener(e -> Log.w(TAG, "Transaction failure.", e));
 
 

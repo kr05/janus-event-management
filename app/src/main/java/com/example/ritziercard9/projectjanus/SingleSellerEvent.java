@@ -8,15 +8,15 @@ import java.util.Date;
  * Created by ritziercard9 on 11/30/2017.
  */
 
-public class SingleEvent {
+public class SingleSellerEvent {
 
     private String image, title, location, details, date;
     private int capacity, sold, assigned;
     private Date mTimestamp;
 
-    public SingleEvent() {}
+    public SingleSellerEvent() {}
 
-    public SingleEvent(String image, String title, String location, String details, String date, int capacity, int sold, int assigned) {
+    public SingleSellerEvent(String image, String title, String location, String details, String date, int capacity, int sold) {
         this.image = image;
         this.title = title;
         this.location = location;
@@ -24,7 +24,6 @@ public class SingleEvent {
         this.date = date;
         this.capacity = capacity;
         this.sold = sold;
-        this.assigned = assigned;
     }
 
     public String getImage() {
@@ -86,13 +85,5 @@ public class SingleEvent {
 
     public void setSold(int sold) {
         this.sold = sold;
-    }
-
-    public int getAssigned() {
-        return assigned;
-    }
-
-    public void setAssigned(int assigned) {
-        this.assigned = assigned;
     }
 }

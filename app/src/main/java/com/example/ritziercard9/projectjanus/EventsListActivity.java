@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -30,6 +34,7 @@ public class EventsListActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;
+    private String sellerUID;
 
 
     @Override
@@ -42,12 +47,14 @@ public class EventsListActivity extends AppCompatActivity {
         //myToolbar.setTitle("Detalles del evento");
         setSupportActionBar(myToolbar);
 
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-        // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+        String queryString = null;
 
-        Query query = db.collection("events").orderBy("title");
+        if (getIntent().getExtras() != null) {
+            sellerUID = getIntent().getStringExtra("sellerUID");
+            queryString = "sellers/" + sellerUID + "/events";
+        }
+
+        Query query = db.collection(queryString).orderBy("title");
 
         // Configure recycler adapter options:
         FirestoreRecyclerOptions<SingleEvent> options = new FirestoreRecyclerOptions.Builder<SingleEvent>()
@@ -74,14 +81,18 @@ public class EventsListActivity extends AppCompatActivity {
                 holder.location.setText(model.getLocation());
                 holder.details.setText(model.getDetails());
                 holder.date.setText(model.getDate());
-                Glide.with(getApplicationContext())
-                        .load(model.getImage())
-                        .into(holder.image);
+
+                if (!TextUtils.isEmpty(model.getImage())) {
+                    Glide.with(getApplicationContext())
+                            .load(model.getImage())
+                            .into(holder.image);
+                }
 
                 holder.itemView.setOnClickListener(v -> {
                     DocumentSnapshot doc = getSnapshots().getSnapshot(position);
                     Intent intent = new Intent(getApplicationContext(), EventDetails.class);
                     intent.putExtra("UID", doc.getId());
+                    intent.putExtra("sellerUID", sellerUID);
                     startActivity(intent);
                 });
             }
@@ -100,6 +111,29 @@ public class EventsListActivity extends AppCompatActivity {
             }
         };
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
 
