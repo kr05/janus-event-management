@@ -16,13 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class OrganizerMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SellersFragment.OnSellersFragmentInteractionListener, EventsFragment.OnEventsFragmentInteractionListener {
 
-    private String selectedNav;
+    private String selectedNav, name, email;
     private static final int NEW_EVENT_REQUEST = 10;
     private static final int NEW_SELLER_REQUEST = 20;
     private FirebaseAuth mAuth;
@@ -34,8 +36,10 @@ public class OrganizerMainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-
+        name = currentUser.getDisplayName();
+        email = currentUser.getEmail();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -45,6 +49,16 @@ public class OrganizerMainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+
+        TextView navName = header.findViewById(R.id.navHeaderName);
+        TextView navEmail = header.findViewById(R.id.navHeaderEmail);
+
+        navName.setText(name);
+        navEmail.setText(email);
+
+
 
         android.support.v4.app.FragmentTransaction initTransaction = getSupportFragmentManager().beginTransaction();
         if (getIntent().getStringExtra("selected") != null) {

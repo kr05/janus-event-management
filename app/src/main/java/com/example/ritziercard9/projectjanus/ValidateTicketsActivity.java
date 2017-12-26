@@ -101,6 +101,13 @@ public class ValidateTicketsActivity extends AppCompatActivity {
 
         Log.d(TAG, "onNewIntent: " + nfcId);
 
+        if (nfcId.equals("04BDC982744080")) {
+            Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto no es valido!", Snackbar.LENGTH_INDEFINITE);
+            sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            sb.show();
+            return;
+        }
+
         scanTicket();
     }
 
