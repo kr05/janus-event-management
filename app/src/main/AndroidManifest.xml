@@ -56,7 +56,7 @@
             android:name=".NewSellerActivity"
             android:label="Crear vendedor"
             android:parentActivityName=".OrganizerMainActivity" />
-        <activity android:name=".SellerAssignEventActivity"></activity>
+        <activity android:name=".SellerAssignEventActivity" android:label="Asignar evento" android:parentActivityName=".OrganizerSellerDetailsActivity"/>
     </application>
 
 </manifest>
