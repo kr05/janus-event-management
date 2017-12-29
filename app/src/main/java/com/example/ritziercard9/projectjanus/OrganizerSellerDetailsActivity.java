@@ -10,7 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -30,6 +33,7 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = "OrganizerSellerDetails";
     private static final int ASSIGN_EVENT_REQUEST = 50;
+    private static final int COBRAR_EVENTO_REQUEST = 51;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private TextView nameTextView, addressTextView, phoneTextView, emailTextView;
     private ImageView sellerImageView;
@@ -60,7 +64,7 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(String uid) {
-        query = db.collection("sellers/" + uid + "/events").orderBy("title");
+        query = db.collection("sellers/" + uid + "/events");
 
         // Configure recycler adapter options:
         options = new FirestoreRecyclerOptions.Builder<SingleEvent>()
@@ -97,6 +101,21 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
                             .load(model.getImage())
                             .into(holder.image);
                 }
+
+                holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                    @Override
+                    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                        contextMenu.add("cobrar").setOnMenuItemClickListener(item -> {
+                            DocumentSnapshot doc = getSnapshots().getSnapshot(position);
+                            Log.d(TAG, "onMenuItemClick: on context menu cobrar click:" + model.getTitle());
+                            Intent intent = new Intent(getApplicationContext(), OrganizerCobrarEventoActivity.class);
+                            intent.putExtra("UID", uid);
+                            intent.putExtra("EVENT_UID", doc.getId());
+                            startActivityForResult(intent, COBRAR_EVENTO_REQUEST);
+                            return true;
+                        });
+                    }
+                });
             }
 
             @Override
@@ -193,6 +212,10 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
         if (requestCode == ASSIGN_EVENT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Snackbar.make(findViewById(R.id.organizerSellerDetailsContainer), "El evento a sido agregado.", Snackbar.LENGTH_LONG).show();
+            }
+        } else if (requestCode == COBRAR_EVENTO_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Snackbar.make(findViewById(R.id.organizerSellerDetailsContainer), "El evento a sido cobrado.", Snackbar.LENGTH_LONG).show();
             }
         }
     }

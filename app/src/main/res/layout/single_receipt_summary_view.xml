@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/receiptSummaryTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="32dp"
+        android:text="General"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/receiptSummaryQuantity"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/receiptSummaryQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="4 x $20"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="@+id/receiptSummaryTitle"
+        app:layout_constraintEnd_toStartOf="@+id/receiptSummaryTotalPrice"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/receiptSummaryTitle"
+        app:layout_constraintTop_toTopOf="@+id/receiptSummaryTitle" />
+
+    <TextView
+        android:id="@+id/receiptSummaryTotalPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="$80"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="@+id/receiptSummaryQuantity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/receiptSummaryQuantity"
+        app:layout_constraintTop_toTopOf="@+id/receiptSummaryQuantity" />
+</android.support.constraint.ConstraintLayout>

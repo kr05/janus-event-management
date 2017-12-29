@@ -33,8 +33,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
@@ -52,6 +54,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
     private Button receiptButton, noReceiptButton;
     private ProgressBar activatingTicketsProgressBar;
+    private List<String> scannedTickets;
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
@@ -80,6 +83,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
         onCreateSetupNfc();
 
+        scannedTickets = new ArrayList<>();
 
         Toolbar myToolbar = findViewById(R.id.activateTicketsToolbar);
 
@@ -94,7 +98,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
         extractBundleData(getIntent().getExtras());
 
-        receiptsCollection = db.collection("events/" + uid + "/receipts");
+        receiptsCollection = db.collection("sellers/" + sellerUID + "/events/" + uid + "/receipts");
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
@@ -127,10 +131,10 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
 
-//        if (mAdapter != null && mAdapter.isEnabled()) {
-//        } else {
-//            finish();
-//        }
+        if (mAdapter != null && mAdapter.isEnabled()) {
+        } else {
+            finish();
+        }
     }
 
     private void onResumeSetupNfc() {
@@ -143,9 +147,15 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         final String nfcId = bytesToHex(tagFromIntent.getId());
 
-        Log.d(TAG, "onNewIntent: " + nfcId);
-        Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boletos escaneado:" + nfcId, Snackbar.LENGTH_LONG).show();
+        if (scannedTickets.contains(nfcId)) {
+            Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto ya a sido escaneado!", Snackbar.LENGTH_INDEFINITE);
+            sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            sb.show();
+            return;
+        }
 
+        Log.d(TAG, "onNewIntent: " + nfcId);
+        Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto escaneado:" + nfcId, Snackbar.LENGTH_LONG).show();
         addCounter();
     }
 
@@ -290,6 +300,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         data.put("ticketQuantity", summaryTicketQuantityInt);
         data.put("ticketTotal", Double.parseDouble(summaryTicketTotal));
         data.put("customerReceiptSent", true);
+        data.put("scannedTickets", scannedTickets);
 
         receiptsCollection.add(data).addOnSuccessListener(documentReference -> {
             Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
@@ -314,6 +325,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         data.put("ticketQuantity", summaryTicketQuantityInt);
         data.put("ticketTotal", Double.parseDouble(summaryTicketTotal));
         data.put("customerReceiptSent", false);
+        data.put("scannedTickets", scannedTickets);
 
         receiptsCollection.add(data).addOnSuccessListener(documentReference -> {
             Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());

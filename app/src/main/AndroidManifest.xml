@@ -56,7 +56,14 @@
             android:name=".NewSellerActivity"
             android:label="Crear vendedor"
             android:parentActivityName=".OrganizerMainActivity" />
-        <activity android:name=".SellerAssignEventActivity" android:label="Asignar evento" android:parentActivityName=".OrganizerSellerDetailsActivity"/>
+        <activity
+            android:name=".SellerAssignEventActivity"
+            android:label="Asignar evento"
+            android:parentActivityName=".OrganizerSellerDetailsActivity" />
+        <activity
+            android:name=".OrganizerCobrarEventoActivity"
+            android:label="Cobrar boletos"
+            android:parentActivityName=".OrganizerSellerDetailsActivity" />
     </application>
 
 </manifest>
