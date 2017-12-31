@@ -59,7 +59,6 @@ public class SellerAssignEventActivity extends AppCompatActivity implements Vert
     private Spinner eventChooserSpinner;
     private String currentQuantity;
     private String selectedEvent;
-    private CollectionReference eventsCollection;
     private String uid;
     private QuerySnapshot currentSnapshots;
     private CollectionReference currentSeller;

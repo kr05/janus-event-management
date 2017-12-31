@@ -21,23 +21,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 
@@ -48,7 +49,6 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
     private static final String TAG = "ActivateTicketsActivity";
     private static final String UID = "uid";
     private static final String TICKET_UID = "ticketUID";
-    private int counter = 0;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference receiptsCollection;
 
@@ -147,16 +147,48 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         final String nfcId = bytesToHex(tagFromIntent.getId());
 
+        //Check if ticket has already been scanned (local)
+        //Check if expected ticket quantity matches scanned tickets
+        //Otherwise, add to ticket array
         if (scannedTickets.contains(nfcId)) {
-            Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto ya a sido escaneado!", Snackbar.LENGTH_INDEFINITE);
+            Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto ya a sido escaneado!", Snackbar.LENGTH_LONG);
             sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
             sb.show();
             return;
         }
 
-        Log.d(TAG, "onNewIntent: " + nfcId);
-        Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto escaneado:" + nfcId, Snackbar.LENGTH_LONG).show();
-        addCounter();
+        if (scannedTickets.size() >= summaryTicketQuantityInt) {
+            Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "Todos los boletos requeridos han sido escaneados!", Snackbar.LENGTH_LONG);
+            sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            sb.show();
+            return;
+        }
+
+
+        DocumentReference ticketDocRef = db.document("events/" + uid + "/ticketList/" + nfcId);
+        ticketDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Task has been successful");
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "El boleto ya a sido comprado! Por favor usar otro boleto y contacte a su organizador.", Snackbar.LENGTH_LONG);
+                        sb.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark));
+                        sb.show();
+                    } else {
+                        Log.d(TAG, "nfcId passed checks: " + nfcId);
+                        Snackbar.make(findViewById(R.id.activateTicketsContainer), "Boleto escaneado:" + nfcId, Snackbar.LENGTH_LONG).show();
+                        addCounter(nfcId);
+                    }
+                } else {
+                    Log.d(TAG, "onComplete: Task has NOT been successful");
+                    Snackbar sb = Snackbar.make(findViewById(R.id.activateTicketsContainer), "Hubo un error; cheque su coneccion e intente de nuevo.", Snackbar.LENGTH_LONG);
+                    sb.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark));
+                    sb.show();
+                }
+            }
+        });
     }
 
     @Override
@@ -235,7 +267,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
             case 0:
                 ImageView image = findViewById(R.id.scanningStepperImageView);
                 image.setImageResource(R.drawable.ic_nfc);
-                updateScanningRemainingTicketsTextView(counter);
+                updateScanningRemainingTicketsTextView(scannedTickets.size());
                 checkScannedTickets();
                 break;
             case 1:
@@ -260,7 +292,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
     }
 
     private void checkScannedTickets() {
-        if (counter >= summaryTicketQuantityInt) {
+        if (scannedTickets.size() >= summaryTicketQuantityInt) {
             verticalStepperForm.setActiveStepAsCompleted();
         } else {
             String errorMessage = "Please scan all tickets.";
@@ -341,15 +373,15 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
 
     }
 
-    public void addCounter() {
-        counter++;
-        updateScanningRemainingTicketsTextView(counter);
+    public void addCounter(String nfcId) {
+        scannedTickets.add(nfcId);
+        updateScanningRemainingTicketsTextView(scannedTickets.size());
         checkScannedTickets();
     }
 
-    private void updateScanningRemainingTicketsTextView(int counter) {
+    private void updateScanningRemainingTicketsTextView(int scannedTicketsSize) {
         TextView remainingTicketsTextView = findViewById(R.id.remainingTicketsTextView);
-        int remainingTickets = summaryTicketQuantityInt - counter;
+        int remainingTickets = summaryTicketQuantityInt - scannedTicketsSize;
 
         if (remainingTickets < 0) {
             remainingTickets = 0;
