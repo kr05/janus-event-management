@@ -13,12 +13,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -101,6 +104,7 @@ public class ValidateTicketsActivity extends AppCompatActivity {
 
         Log.d(TAG, "onNewIntent: " + nfcId);
 
+        //For testing purposes only
         if (nfcId.equals("04BDC982744080")) {
             Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto no es valido!", Snackbar.LENGTH_INDEFINITE);
             sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
@@ -108,7 +112,49 @@ public class ValidateTicketsActivity extends AppCompatActivity {
             return;
         }
 
-        scanTicket();
+        DocumentReference ticketDocRef = db.document("events/" + uid + "/ticketList/" + nfcId);
+        ticketDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Task has been successful");
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "event ticket:" + document.getData());
+                        if (document.contains("isActivated") && document.getBoolean("isActivated")) {
+                            scanTicket(document);
+                        } else {
+                            showTicketIsNotActivatedSnackbar();
+                        }
+                    } else {
+                        showTicketDoesNotExist();
+                    }
+                } else {
+                    showScanErrorSnackbar();
+                }
+            }
+        });
+    }
+
+    private void showTicketDoesNotExist() {
+        Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto no a sido comprado!", Snackbar.LENGTH_INDEFINITE);
+        sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        sb.show();
+        return;
+    }
+
+    private void showScanErrorSnackbar() {
+        Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "No se pudo verificar el boleto, por favor intente de nuevo.", Snackbar.LENGTH_INDEFINITE);
+        sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        sb.show();
+        return;
+    }
+
+    private void showTicketIsNotActivatedSnackbar() {
+        Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto no a sido activado!", Snackbar.LENGTH_INDEFINITE);
+        sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        sb.show();
+        return;
     }
 
     @Override
@@ -181,44 +227,59 @@ public class ValidateTicketsActivity extends AppCompatActivity {
         }
     }
 
-    public void scanTicket() {
-        Log.d(TAG, "onValidateImageClick: CLICK");
+    // TODO: 12/30/2017 Consider checking if an already entered ticket tries to enter again, in case it was smuggled out
+    public void scanTicket(DocumentSnapshot ticket) {
+        Log.d(TAG, "event ticket status:" + ticket.get("status"));
+        Map<String, Object> data = new HashMap<>();
+        String status = null;
 
-
-
-        final DocumentReference checkedInDocRef = db.document("events/" + uid + "/counters/checkedIn");
-
-        db.runTransaction(transaction -> {
-            DocumentSnapshot snapshot = transaction.get(checkedInDocRef);
-            double updatedCheckedIn;
-            if (!scannerTypeSwitch.isChecked()) {
-                updatedCheckedIn = snapshot.getDouble("value") + 1;
+        //isChecked = true: exiting
+        //isChecked = false: entering
+        if (scannerTypeSwitch.isChecked()) {
+            status = "SALIDA";
+            if (!ticket.get("status").equals("exited")) {
+                data.put("status", "exited");
             } else {
-                updatedCheckedIn = snapshot.getDouble("value") - 1;
+                showInvalidStatusSnackbar(status);
+                return;
             }
-
-            if (updatedCheckedIn < 0) {
-                throw new FirebaseFirestoreException("Checked-in counter less than zero",
-                        FirebaseFirestoreException.Code.ABORTED);
+        } else {
+            status = "ENTRADA";
+            if (!ticket.get("status").equals("entered")) {
+                data.put("status", "entered");
             } else {
-                transaction.update(checkedInDocRef, "value", updatedCheckedIn);
-                // Success
-                return updatedCheckedIn;
+                showInvalidStatusSnackbar(status);
+                return;
             }
+        }
 
-        })
-        .addOnSuccessListener(result -> {
-            Log.d(TAG, "Transaction success:" + result);
-            String scannerNotifText = "Boleto escaneado";
-            if (!scannerTypeSwitch.isChecked()) {
-                scannerNotifText += " para entrada: VALIDO";
-            } else {
-                scannerNotifText += " para salida: VALIDO";
+        final DocumentReference ticketDoc = db.document("events/" + ticket.get("eventUID") + "/ticketList/" + ticket.get("ticketUID"));
+        String finalStatus = status;
+        ticketDoc.update(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Ticket update status has been successful");
+                    Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), finalStatus, Snackbar.LENGTH_INDEFINITE);
+                    if (finalStatus.equals("ENTRADA")) {
+                        sb.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.entryGreen));
+                    } else {
+                        sb.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                    }
+                    sb.show();
+                } else {
+                    Log.d(TAG, "onComplete: Ticket update error");
+                    showScanErrorSnackbar();
+                }
             }
-            Snackbar.make(findViewById(R.id.validateTicketsContainer), scannerNotifText, Snackbar.LENGTH_INDEFINITE).show();
-        })
-        .addOnFailureListener(e -> Log.w(TAG, "Transaction failure.", e));
+        });
 
 
+    }
+
+    private void showInvalidStatusSnackbar(String msg) {
+        Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto ya se a usado para " + msg + ".", Snackbar.LENGTH_INDEFINITE);
+        sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        sb.show();
     }
 }
