@@ -15,19 +15,29 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
+    private static final String TAG = "CobrarEvento";
     private Query query;
     private FirestoreRecyclerOptions<SingleReceiptSummary> options;
     private RecyclerView mRecyclerView;
@@ -40,6 +50,10 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
     private String uid;
     private String eventUID;
+    private TextView totalTickets, totalPrice;
+    private double quantity, total;
+    private ProgressBar cobrandoEventoProgressCircle;
+    private Button cancelButton, confirmButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +81,45 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
         uid = extras.getString(SELLER_UID);
         eventUID = extras.getString(EVENT_UID);
 
+        totalTickets = findViewById(R.id.organizerCobrarEventoTotalTickets);
+        totalPrice = findViewById(R.id.organizerCobrarEventoTotal);
+
+        cobrandoEventoProgressCircle = findViewById(R.id.organizerCobrarEventoProgressCircle);
+        cancelButton = findViewById(R.id.organizerCobrarEventoCancel);
+        confirmButton = findViewById(R.id.organizerCobrarEventoConfirm);
+
         setupRecyclerView(uid);
+        setupEventListeners();
+    }
+
+    private void setupEventListeners() {
+        final CollectionReference receiptSummariesRef = db.collection("sellers/" + uid + "/events/" + eventUID + "/receiptSummaries");
+        receiptSummariesRef.addSnapshotListener((snapshot, e) -> {
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e);
+                return;
+            }
+
+            total = 0;
+            quantity = 0;
+
+            for (DocumentSnapshot doc : snapshot) {
+                if (doc.get("totalPrice") != null && doc.get("totalTickets") != null) {
+                    total += doc.getDouble("totalPrice");
+                    quantity += doc.getDouble("totalTickets");
+                }
+            }
+            updateUI(total, (int) quantity);
+        });
+    }
+
+    private void updateUI(double total, int quantity) {
+        totalPrice.setText("$" + String.valueOf(total));
+        totalTickets.setText(String.valueOf(quantity));
     }
 
     private void setupRecyclerView(String uid) {
-        query = db.collection("sellers/" + uid + "/receiptsSummary").orderBy("totalPrice");
+        query = db.collection("sellers/" + uid + "/events/" + eventUID + "/receiptSummaries").orderBy("price");
 
         // Configure recycler adapter options:
         options = new FirestoreRecyclerOptions.Builder<SingleReceiptSummary>()
@@ -92,11 +140,11 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
         mAdapter = new FirestoreRecyclerAdapter<SingleReceiptSummary, OrganizerCobrarEventoActivity.ReceiptSummaryHolder>(options) {
             @Override
             public void onBindViewHolder(OrganizerCobrarEventoActivity.ReceiptSummaryHolder holder, int position, SingleReceiptSummary model) {
-                String quantityString = model.getTotalTickets() + " x " + model.getPrice();
+                String quantityString = model.getTotalTickets().intValue() + " x " + model.getPrice();
 
                 holder.title.setText(model.getTitle());
                 holder.quantity.setText(quantityString);
-                holder.totalPrice.setText(model.getTotalPrice());
+                holder.totalPrice.setText(Double.toString(model.getTotalPrice()));
             }
 
             @Override
@@ -134,6 +182,48 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
     @Override
     public boolean supportShouldUpRecreateTask(@NonNull Intent targetIntent) {
         return true;
+    }
+
+    public void onCobrarEventoConfirm(View view) {
+        Log.d(TAG, "COBRANDO EVENTO");
+
+        toggleButtonVisibilityOnProcessing(true);
+
+        Map<String, Object> nestedData = new HashMap<>();
+        nestedData.put("sold", quantity);
+        nestedData.put("totalAmount", total);
+        nestedData.put("executorUID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        nestedData.put("finishedAt", FieldValue.serverTimestamp());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("chargeMetadata", nestedData);
+        data.put("status", "finished");
+
+        DocumentReference sellerEvent = db.document("sellers/" + uid + "/events/" + eventUID);
+        sellerEvent.update(data).addOnSuccessListener(documentReference -> {
+            Log.d(TAG, "onSuccess: Event amount due collected successfully");
+            setResult(RESULT_OK);
+            finish();
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "onFailure: Error adding receipt.");
+            toggleButtonVisibilityOnProcessing(false);
+        });
+    }
+
+    public void onCobrarEventoCancel(View view) {
+        finish();
+    }
+
+    private void toggleButtonVisibilityOnProcessing(boolean processing) {
+        if (processing) {
+            cobrandoEventoProgressCircle.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(View.INVISIBLE);
+            cancelButton.setVisibility(View.INVISIBLE);
+        } else {
+            cobrandoEventoProgressCircle.setVisibility(View.INVISIBLE);
+            confirmButton.setVisibility(View.VISIBLE);
+            cancelButton.setVisibility(View.VISIBLE);
+        }
     }
 
     public class ReceiptSummaryHolder extends RecyclerView.ViewHolder {

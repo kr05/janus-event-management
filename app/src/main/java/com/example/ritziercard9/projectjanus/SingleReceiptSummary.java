@@ -9,10 +9,11 @@ import java.util.Date;
  */
 
 public class SingleReceiptSummary {
-    private String title, price, totalPrice, totalTickets;
+    private String title;
+    private Double price, totalPrice, totalTickets;
     private Date mTimestamp;
 
-    public SingleReceiptSummary(String title, String price, String totalPrice, String totalTickets) {
+    public SingleReceiptSummary(String title, Double price, Double totalPrice, Double totalTickets) {
         this.title = title;
         this.price = price;
         this.totalPrice = totalPrice;
@@ -31,27 +32,27 @@ public class SingleReceiptSummary {
         this.title = title;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public String getTotalPrice() {
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(String totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public String getTotalTickets() {
+    public Double getTotalTickets() {
         return totalTickets;
     }
 
-    public void setTotalTickets(String totalTickets) {
+    public void setTotalTickets(Double totalTickets) {
         this.totalTickets = totalTickets;
     }
 

@@ -228,6 +228,7 @@ public class EventDetails extends AppCompatActivity {
         String ticketTitle = ticketSpinner.getSelectedItem().toString();
         String ticketQuantity = quantitySpinner.getSelectedItem().toString();
         Double ticketTotal = null;
+        Double ticketPrice = null;
         String ticketUID = "";
 
         ListIterator<SingleTicket> iterator = options.getSnapshots().listIterator();
@@ -235,7 +236,8 @@ public class EventDetails extends AppCompatActivity {
         while (iterator.hasNext() && ticketTotal == null) {
             SingleTicket curTicket = iterator.next();
             if ((curTicket.getTitle()).equals(ticketTitle)) {
-                ticketTotal = curTicket.getPrice() * Integer.parseInt(ticketQuantity);
+                ticketPrice = curTicket.getPrice();
+                ticketTotal = ticketPrice * Integer.parseInt(ticketQuantity);
                 ticketUID = options.getSnapshots().getSnapshot(iterator.previousIndex()).getId();
 
             }
@@ -246,6 +248,7 @@ public class EventDetails extends AppCompatActivity {
         bundle.putString("ticketTitle", ticketTitle);
         bundle.putString("ticketQuantity", ticketQuantity);
         bundle.putString("ticketTotal", REAL_FORMATTER.format(ticketTotal));
+        bundle.putDouble("ticketPrice", ticketPrice);
         bundle.putString("uid", uid);
         bundle.putString("ticketUID", ticketUID);
         bundle.putString("sellerUID", sellerUid);

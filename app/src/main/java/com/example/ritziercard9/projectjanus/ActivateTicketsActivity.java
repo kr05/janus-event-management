@@ -49,6 +49,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
     private static final String TAG = "ActivateTicketsActivity";
     private static final String UID = "uid";
     private static final String TICKET_UID = "ticketUID";
+    private static final String TICKET_PRICE_KEY = "ticketPrice";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference receiptsCollection;
 
@@ -64,6 +65,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
     private int summaryTicketQuantityInt;
     private PendingIntent pendingIntent;
     private NfcAdapter mAdapter;
+    private double summaryTicketPrice;
 
     //Custom method to convert bytes to String.
     private static String bytesToHex(byte[] bytes) {
@@ -217,6 +219,7 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         summaryTicketQuantity = extras.getString(TICKET_QUANTITY_KEY);
         summaryTicketQuantityInt = Integer.parseInt(summaryTicketQuantity);
         summaryTicketTotal = extras.getString(TICKET_TOTAL_KEY);
+        summaryTicketPrice = extras.getDouble(TICKET_PRICE_KEY);
         uid = extras.getString(UID);
         sellerUID = extras.getString("sellerUID");
         ticketUID = extras.getString(TICKET_UID);
@@ -333,6 +336,9 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         data.put("ticketTotal", Double.parseDouble(summaryTicketTotal));
         data.put("customerReceiptSent", true);
         data.put("scannedTickets", scannedTickets);
+        data.put("ticketTitle", summaryTicketTitle);
+        data.put("ticketPrice", summaryTicketPrice);
+
 
         receiptsCollection.add(data).addOnSuccessListener(documentReference -> {
             Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
@@ -358,6 +364,8 @@ public class ActivateTicketsActivity extends AppCompatActivity implements Vertic
         data.put("ticketTotal", Double.parseDouble(summaryTicketTotal));
         data.put("customerReceiptSent", false);
         data.put("scannedTickets", scannedTickets);
+        data.put("ticketTitle", summaryTicketTitle);
+        data.put("ticketPrice", summaryTicketPrice);
 
         receiptsCollection.add(data).addOnSuccessListener(documentReference -> {
             Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
