@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class OrganizerSellerDetailsActivity extends AppCompatActivity {
 
@@ -89,12 +92,26 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
                 holder.location.setText(model.getLocation());
                 holder.date.setText(model.getDate());
 
-                if (model.getAssigned() != 0) {
+                if (model.getStatus().equals("finished")) {
+
+                    Map<String, Object> metadata = model.getChargeMetadata();
+                    Log.d(TAG, "charge metadata:" + metadata);
+
+                    Double sold = (Double) metadata.get("sold");
+                    int stringSold = sold.intValue();
+                    String stringAssigned = String.valueOf(model.getAssigned());
+
+                    holder.cobradoLabel.setVisibility(View.VISIBLE);
+                    holder.assigned.setText("Boletos vendidos: " + stringSold + "/" + stringAssigned);
+
+                } else if (model.getAssigned() != 0) {
                     String stringAssigned = String.valueOf(model.getAssigned());
                     holder.assigned.setText("Boletos asignados: " + stringAssigned);
                 } else {
                     holder.assigned.setText("SIN BOLETOS");
                 }
+
+
 
                 if (!TextUtils.isEmpty(model.getImage())) {
                     Glide.with(getApplicationContext())
@@ -108,6 +125,12 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
                         contextMenu.add("cobrar").setOnMenuItemClickListener(item -> {
                             DocumentSnapshot doc = getSnapshots().getSnapshot(position);
                             Log.d(TAG, "onMenuItemClick: on context menu cobrar click:" + model.getTitle());
+
+                            if (model.getStatus().equals("finished")) {
+                                Snackbar.make(findViewById(R.id.organizerSellerDetailsContainer), "El evento ya a sido cobrado.", Snackbar.LENGTH_LONG).show();
+                                return true;
+                            }
+
                             Intent intent = new Intent(getApplicationContext(), OrganizerCobrarEventoActivity.class);
                             intent.putExtra("UID", uid);
                             intent.putExtra("EVENT_UID", doc.getId());
@@ -132,6 +155,25 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
         };
         mRecyclerView.setAdapter(mAdapter);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.seller_details_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_ticket:
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
 
     private void init() {
         nameTextView = findViewById(R.id.organizerSellerDetailsName);
@@ -221,13 +263,14 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
     }
 
     public void onOrganizerSellerDetailsFabClick(View view) {
+
         Intent intent = new Intent(this, SellerAssignEventActivity.class);
         intent.putExtra("uid", uid);
         startActivityForResult(intent, ASSIGN_EVENT_REQUEST);
     }
 
     public class EventHolder extends RecyclerView.ViewHolder {
-        TextView title, location, date, assigned;
+        TextView title, location, date, assigned, cobradoLabel;
         ImageView image;
 
         public EventHolder(View itemView) {
@@ -237,6 +280,7 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
             image = itemView.findViewById(R.id.eventImageView);
             date = itemView.findViewById(R.id.eventDateTextView);
             assigned = itemView.findViewById(R.id.eventDetailsTextView);
+            cobradoLabel = itemView.findViewById(R.id.eventCobradoLabel);
         }
     }
 }

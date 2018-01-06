@@ -262,6 +262,7 @@ public class SellerAssignEventActivity extends AppCompatActivity implements Vert
         }
 
         singleEvent.setAssigned(Integer.parseInt(currentQuantity));
+        singleEvent.setStatus("active");
 
         currentSeller.document(eventUid).set(singleEvent).addOnSuccessListener(documentReference -> {
             Log.d(TAG, "onSuccess: event added successfully");

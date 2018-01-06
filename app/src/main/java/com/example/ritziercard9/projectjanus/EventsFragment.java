@@ -97,8 +97,6 @@ public class EventsFragment extends Fragment {
                 holder.location.setText(model.getLocation());
                 holder.details.setText(model.getDetails());
                 holder.date.setText(model.getDate());
-//                holder.sold.setText(Integer.toString(model.getCapacity()));
-//                holder.sold.setText(Integer.toString(model.getSold()));
 
                 if (!TextUtils.isEmpty(model.getImage())) {
                     Glide.with(getActivity())
@@ -181,8 +179,6 @@ public class EventsFragment extends Fragment {
             details = itemView.findViewById(R.id.eventDetailsTextView);
             image = itemView.findViewById(R.id.eventImageView);
             date = itemView.findViewById(R.id.eventDateTextView);
-            capacity = itemView.findViewById(R.id.eventCapacityTextView);
-            sold = itemView.findViewById(R.id.eventTicketsSoldTextView);
         }
     }
 

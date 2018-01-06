@@ -3,6 +3,9 @@
     package="com.example.ritziercard9.projectjanus">
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -64,6 +67,11 @@
             android:name=".OrganizerCobrarEventoActivity"
             android:label="Cobrar boletos"
             android:parentActivityName=".OrganizerSellerDetailsActivity" />
+
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
+
     </application>
 
 </manifest>

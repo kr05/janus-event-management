@@ -30,18 +30,20 @@
         android:text="Banda"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newEventToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/newEventImage" />
 
     <EditText
         android:id="@+id/newEventBandName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:backgroundTint="@color/textColor"
         android:ems="10"
         android:inputType="textPersonName"
         android:textColor="@color/textColor"
+        app:layout_constraintEnd_toStartOf="@+id/newEventCapacity"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newEventBandNameTitle" />
 
@@ -51,113 +53,48 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Cuidad"
+        android:text="Direccion"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newEventBandName" />
 
-    <EditText
+    <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
         android:id="@+id/newEventCity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-    <TextView
-        android:id="@+id/textView22"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Fecha/Hora"
-        android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newEventCity" />
-
-    <EditText
-        android:id="@+id/newEventDate"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="date"
-        android:textColor="@color/textColor"
-        app:layout_constraintEnd_toStartOf="@+id/newEventTime"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-    <EditText
-        android:id="@+id/newEventTime"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="date"
         android:textColor="@color/textColor"
-        app:layout_constraintBottom_toBottomOf="@+id/newEventDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/newEventDate"
-        app:layout_constraintTop_toTopOf="@+id/newEventDate" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView21"
+        app:pacv_googleMapsApiKey="AIzaSyC1UhVNiAgmhfSmIKwVru34lzulPQE49Ko" />
 
     <TextView
         android:id="@+id/textView23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="Capacidad total"
         android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newEventDate" />
+        app:layout_constraintBottom_toTopOf="@+id/newEventCapacity"
+        app:layout_constraintStart_toStartOf="@+id/newEventCapacity" />
 
     <EditText
         android:id="@+id/newEventCapacity"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:backgroundTint="@color/textColor"
         android:ems="10"
         android:inputType="number"
         android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23" />
-
-    <TextView
-        android:id="@+id/textView24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Descripcion"
-        android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newEventCapacity" />
-
-    <EditText
-        android:id="@+id/newEventDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+        app:layout_constraintBottom_toBottomOf="@+id/newEventBandName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newEventBandName"
+        app:layout_constraintTop_toTopOf="@+id/newEventBandName" />
 
     <Button
         android:id="@+id/newEventSendButton"
@@ -196,5 +133,84 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/newEventCancelButton"
         app:layout_constraintStart_toEndOf="@+id/newEventSendButton" />
+
+    <ImageView
+        android:id="@+id/newEventImage"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newEventToolbar" />
+
+    <Button
+        android:id="@+id/newEventAddImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/textColor"
+        android:drawableLeft="@drawable/ic_add_black_24dp"
+        android:drawablePadding="5dp"
+        android:drawableTint="@color/common_google_signin_btn_text_dark_focused"
+        android:onClick="onAddImageClick"
+        android:text="Agregar imagen"
+        app:layout_constraintBottom_toBottomOf="@+id/newEventImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/newEventImage"
+        app:layout_constraintTop_toTopOf="@+id/newEventImage" />
+
+    <Button
+        android:id="@+id/newEventTimeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/textColor"
+        android:drawableLeft="@drawable/time"
+        android:drawablePadding="5dp"
+        android:onClick="showTimePickerDialog"
+        android:text="Hora"
+        app:layout_constraintEnd_toEndOf="@+id/newEventDateButton"
+        app:layout_constraintStart_toStartOf="@+id/newEventDateButton"
+        app:layout_constraintTop_toBottomOf="@+id/newEventDateButton" />
+
+    <Button
+        android:id="@+id/newEventDateButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/textColor"
+        android:drawableLeft="@drawable/calendar"
+        android:drawablePadding="5dp"
+        android:onClick="showDatePickerDialog"
+        android:text="Fecha"
+        app:layout_constraintEnd_toEndOf="@+id/newEventBandName"
+        app:layout_constraintStart_toStartOf="@+id/newEventBandName"
+        app:layout_constraintTop_toBottomOf="@+id/newEventCity" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Detalles"
+        android:textColor="@color/textColor"
+        app:layout_constraintStart_toStartOf="@+id/newEventCapacity"
+        app:layout_constraintTop_toBottomOf="@+id/newEventCity" />
+
+    <EditText
+        android:id="@+id/newEventDetails"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/textColor"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="@+id/newEventTimeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView29"
+        app:layout_constraintTop_toBottomOf="@+id/textView29" />
 
 </android.support.constraint.ConstraintLayout>

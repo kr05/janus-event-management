@@ -3,6 +3,7 @@ package com.example.ritziercard9.projectjanus;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by ritziercard9 on 11/30/2017.
@@ -10,21 +11,23 @@ import java.util.Date;
 
 public class SingleEvent {
 
-    private String image, title, location, details, date;
-    private int capacity, sold, assigned;
+    private String image, title, location, details, date, status;
+    private int capacity, assigned;
     private Date mTimestamp;
+    private Map<String, Object> chargeMetadata;
 
     public SingleEvent() {}
 
-    public SingleEvent(String image, String title, String location, String details, String date, int capacity, int sold, int assigned) {
+    public SingleEvent(Map<String, Object> chargeMetadata, String image, String title, String location, String details, String date, int capacity, int assigned, String status) {
         this.image = image;
         this.title = title;
         this.location = location;
         this.details = details;
         this.date = date;
         this.capacity = capacity;
-        this.sold = sold;
         this.assigned = assigned;
+        this.status = status;
+        this.chargeMetadata = chargeMetadata;
     }
 
     public String getImage() {
@@ -80,19 +83,27 @@ public class SingleEvent {
         this.capacity = capacity;
     }
 
-    public int getSold() {
-        return sold;
-    }
-
-    public void setSold(int sold) {
-        this.sold = sold;
-    }
-
     public int getAssigned() {
         return assigned;
     }
 
     public void setAssigned(int assigned) {
         this.assigned = assigned;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Map<String, Object> getChargeMetadata() {
+        return chargeMetadata;
+    }
+
+    public void setChargeMetadata(Map<String, Object> chargeMetadata) {
+        this.chargeMetadata = chargeMetadata;
     }
 }
