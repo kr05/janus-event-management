@@ -63,7 +63,7 @@ public class NewEventActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
     private PlacesAutocompleteTextView addressTextView;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private Uri resultUri;
     private String croppedImageUrl;
 

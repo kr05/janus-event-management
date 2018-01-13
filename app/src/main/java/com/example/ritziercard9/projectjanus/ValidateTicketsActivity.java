@@ -104,13 +104,6 @@ public class ValidateTicketsActivity extends AppCompatActivity {
 
         Log.d(TAG, "onNewIntent: " + nfcId);
 
-        //For testing purposes only
-        if (nfcId.equals("04BDC982744080")) {
-            Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto no es valido!", Snackbar.LENGTH_INDEFINITE);
-            sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-            sb.show();
-            return;
-        }
 
         DocumentReference ticketDocRef = db.document("events/" + uid + "/ticketList/" + nfcId);
         ticketDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -121,7 +114,9 @@ public class ValidateTicketsActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.d(TAG, "event ticket:" + document.getData());
-                        if (document.contains("isActivated") && document.getBoolean("isActivated")) {
+                        if (document.contains("status") && document.getString("status").equals("stolen")) {
+                            showTicketIsStolenSnackbar();
+                        } else if (document.contains("isActivated") && document.getBoolean("isActivated")) {
                             scanTicket(document);
                         } else {
                             showTicketIsNotActivatedSnackbar();
@@ -134,6 +129,13 @@ public class ValidateTicketsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showTicketIsStolenSnackbar() {
+        Snackbar sb = Snackbar.make(findViewById(R.id.validateTicketsContainer), "Boleto a sido reportado como perdido, por favor contacte a su administrador!", Snackbar.LENGTH_INDEFINITE);
+        sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        sb.show();
+        return;
     }
 
     private void showTicketDoesNotExist() {

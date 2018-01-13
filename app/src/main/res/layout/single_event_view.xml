@@ -39,7 +39,7 @@
         android:textColor="@color/textColor"
         app:layout_constraintBottom_toTopOf="@+id/eventDateTextView"
         app:layout_constraintStart_toStartOf="@+id/eventDateTextView"
-        app:layout_constraintTop_toBottomOf="@+id/eventTitleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/eventTitleTextView"/>
 
     <TextView
         android:id="@+id/eventDateTextView"

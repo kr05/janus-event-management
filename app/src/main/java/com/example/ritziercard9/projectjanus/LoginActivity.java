@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "checkUser: unable to extract id token");
                     toggleButtonAndProgressVisibilityOnLogin(false);
-                    Snackbar.make(findViewById(R.id.loginContainer), "No se pudo iniciar sesion. Intente de nuevo.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.loginContainer), task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
                     mAuth.signOut();
                     return;
                 }
@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                    Snackbar.make(findViewById(R.id.loginContainer), "No se pudo iniciar sesion. Intente de nuevo.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.loginContainer), task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
                     toggleButtonAndProgressVisibilityOnLogin(false);
                 }
             });
