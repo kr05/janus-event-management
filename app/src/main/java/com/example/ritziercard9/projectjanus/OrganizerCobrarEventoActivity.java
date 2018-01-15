@@ -197,7 +197,6 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
         Map<String, Object> data = new HashMap<>();
         data.put("chargeMetadata", nestedData);
-        data.put("status", "finished");
 
         DocumentReference sellerEvent = db.document("sellers/" + uid + "/events/" + eventUID);
         sellerEvent.update(data).addOnSuccessListener(documentReference -> {
