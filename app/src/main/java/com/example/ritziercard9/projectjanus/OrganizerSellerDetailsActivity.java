@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -92,26 +93,14 @@ public class OrganizerSellerDetailsActivity extends AppCompatActivity {
                 holder.location.setText(model.getLocation());
                 holder.date.setText(model.getDate());
 
-                if (model.getStatus().equals("finished")) {
-
-                    Map<String, Object> metadata = model.getChargeMetadata();
-                    Log.d(TAG, "charge metadata:" + metadata);
-
-                    Double sold = (Double) metadata.get("sold");
-                    int stringSold = sold.intValue();
-                    String stringAssigned = String.valueOf(model.getAssigned());
-
+                if (model.getAssigned() <= 0) {
                     holder.cobradoLabel.setVisibility(View.VISIBLE);
-                    holder.assigned.setText("Boletos vendidos: " + stringSold + "/" + stringAssigned);
-
-                } else if (model.getAssigned() != 0) {
-                    String stringAssigned = String.valueOf(model.getAssigned());
-                    holder.assigned.setText("Boletos asignados: " + stringAssigned);
-                } else {
                     holder.assigned.setText("SIN BOLETOS");
+                } else {
+                    String stringAssigned = String.valueOf(model.getAssigned());
+                    String stringSold = String.valueOf(model.getSold());
+                    holder.assigned.setText("Boletos: " + stringSold + "/" + stringAssigned);
                 }
-
-
 
                 if (!TextUtils.isEmpty(model.getImage())) {
                     Glide.with(getApplicationContext())

@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/organizerCobrarEventoContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.ritziercard9.projectjanus.OrganizerCobrarEventoActivity">
@@ -89,7 +90,10 @@
         app:layout_constraintBottom_toTopOf="@+id/organizerCobrarEventoUnderlineTwo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerCobrarEventoUnderline" />
+        app:layout_constraintTop_toBottomOf="@+id/organizerCobrarEventoUnderline">
+
+
+    </android.support.v7.widget.RecyclerView>
 
     <View
         android:id="@+id/organizerCobrarEventoUnderlineTwo"
@@ -163,8 +167,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Confirmar"
         android:onClick="onCobrarEventoConfirm"
+        android:text="Confirmar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/organizerCobrarEventoCancel" />
 
@@ -180,4 +184,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/organizerCobrarEventoCancel"
         app:layout_constraintStart_toEndOf="@+id/organizerCobrarEventoConfirm" />
+
+    <TextView
+        android:id="@+id/organizerCobrarEventoEmptyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="No hay boletos vendidos"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="18sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/organizerCobrarEventoUnderlineTwo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/organizerCobrarEventoUnderline" />
+
 </android.support.constraint.ConstraintLayout>

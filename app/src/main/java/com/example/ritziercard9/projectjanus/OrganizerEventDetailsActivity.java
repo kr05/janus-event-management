@@ -25,8 +25,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = "OrganizerEventDetails";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private TextView titleTextView, locationTextView, dateTextView, capacityTextView;
-    private Button soldTicketsCounter;
+    private TextView titleTextView, locationTextView, dateTextView, capacityTextView, soldTicketsCounter;
     private ImageView detailsImageView;
     private String uid;
 
@@ -49,7 +48,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         dateTextView = findViewById(R.id.organizerEventDetailsDate);
         detailsImageView = findViewById(R.id.organizerEventDetailsImage);
         capacityTextView = findViewById(R.id.organizerEventDetailsCapacity);
-        soldTicketsCounter = findViewById(R.id.organizerEventDetailsTicketCounter);
+        soldTicketsCounter = findViewById(R.id.organizerEventDetailsSoldTickets);
 
         setupEventListeners(getIntent().getExtras());
     }
@@ -106,6 +105,10 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             capacityTextView.setText(data.get("capacity").toString());
         }
 
+        if (data.get("sold") != null) {
+            soldTicketsCounter.setText(data.get("sold").toString());
+        }
+
         if (data.get("image") != null) {
             Glide.with(getApplicationContext())
                     .load(data.get("image").toString())
@@ -113,32 +116,5 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         }
 
 
-    }
-
-    public void onActivarConteoClick(View view) {
-
-        final CollectionReference ticketsCollection = db.collection("events/" + uid + "/ticketList");
-        ticketsCollection.addSnapshotListener((snapshot, e) -> {
-            if (e != null) {
-                Log.w(TAG, "Listen failed.", e);
-                Snackbar sb = Snackbar.make(findViewById(R.id.organizerEventDetailsContainer), "No se pudo contar boletos, intente de nuevo:" + e.getMessage(), Snackbar.LENGTH_INDEFINITE);
-                sb.getView().setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-                sb.show();
-                return;
-            }
-
-            if (snapshot != null && !snapshot.isEmpty()) {
-                Log.d(TAG, "Current number of ticketrs: " + snapshot.size());
-                updateTicketCounter(snapshot.size());
-            } else {
-                Log.d(TAG, "no tickets found");
-                updateTicketCounter(0);
-            }
-        });
-
-    }
-
-    private void updateTicketCounter(int size) {
-        soldTicketsCounter.setText(Integer.toString(size));
     }
 }

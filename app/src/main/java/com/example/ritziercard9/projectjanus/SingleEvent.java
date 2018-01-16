@@ -12,13 +12,12 @@ import java.util.Map;
 public class SingleEvent {
 
     private String image, title, location, details, date, status;
-    private int capacity, assigned;
+    private int capacity, assigned, sold;
     private Date mTimestamp;
-    private Map<String, Object> chargeMetadata;
 
     public SingleEvent() {}
 
-    public SingleEvent(Map<String, Object> chargeMetadata, String image, String title, String location, String details, String date, int capacity, int assigned, String status) {
+    public SingleEvent(String image, String title, String location, String details, String date, int capacity, int assigned, int sold, String status) {
         this.image = image;
         this.title = title;
         this.location = location;
@@ -27,7 +26,7 @@ public class SingleEvent {
         this.capacity = capacity;
         this.assigned = assigned;
         this.status = status;
-        this.chargeMetadata = chargeMetadata;
+        this.sold = sold;
     }
 
     public String getImage() {
@@ -99,11 +98,11 @@ public class SingleEvent {
         this.status = status;
     }
 
-    public Map<String, Object> getChargeMetadata() {
-        return chargeMetadata;
+    public int getSold() {
+        return sold;
     }
 
-    public void setChargeMetadata(Map<String, Object> chargeMetadata) {
-        this.chargeMetadata = chargeMetadata;
+    public void setSold(int sold) {
+        this.sold = sold;
     }
 }

@@ -2,6 +2,7 @@ package com.example.ritziercard9.projectjanus;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,7 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
     private String uid;
     private String eventUID;
-    private TextView totalTickets, totalPrice;
+    private TextView totalTickets, totalPrice, emptyDataTextView;
     private double quantity, total;
     private ProgressBar cobrandoEventoProgressCircle;
     private Button cancelButton, confirmButton;
@@ -88,6 +89,8 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.organizerCobrarEventoCancel);
         confirmButton = findViewById(R.id.organizerCobrarEventoConfirm);
 
+        emptyDataTextView = findViewById(R.id.organizerCobrarEventoEmptyTextView);
+
         setupRecyclerView(uid);
         setupEventListeners();
     }
@@ -116,6 +119,12 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
     private void updateUI(double total, int quantity) {
         totalPrice.setText("$" + String.valueOf(total));
         totalTickets.setText(String.valueOf(quantity));
+
+        if (quantity <= 0) {
+            emptyDataTextView.setVisibility(View.VISIBLE);
+        } else {
+            emptyDataTextView.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setupRecyclerView(String uid) {
@@ -138,6 +147,7 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
         // specify an adapter
         mAdapter = new FirestoreRecyclerAdapter<SingleReceiptSummary, OrganizerCobrarEventoActivity.ReceiptSummaryHolder>(options) {
+
             @Override
             public void onBindViewHolder(OrganizerCobrarEventoActivity.ReceiptSummaryHolder holder, int position, SingleReceiptSummary model) {
                 String quantityString = model.getTotalTickets().intValue() + " x " + model.getPrice();
@@ -148,10 +158,10 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
             }
 
             @Override
-            public OrganizerCobrarEventoActivity.ReceiptSummaryHolder onCreateViewHolder(ViewGroup group, int i) {
-                View view = LayoutInflater.from(group.getContext())
+            public OrganizerCobrarEventoActivity.ReceiptSummaryHolder onCreateViewHolder(ViewGroup group, int viewType) {
+                View v = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.single_receipt_summary_view, group, false);
-                return new OrganizerCobrarEventoActivity.ReceiptSummaryHolder(view);
+                return new OrganizerCobrarEventoActivity.ReceiptSummaryHolder(v);
             }
 
             @Override
@@ -189,22 +199,25 @@ public class OrganizerCobrarEventoActivity extends AppCompatActivity {
 
         toggleButtonVisibilityOnProcessing(true);
 
+        if (quantity <= 0) {
+            Snackbar.make(findViewById(R.id.organizerCobrarEventoContainer), "No hay boletos vendidos.", Snackbar.LENGTH_LONG).show();
+            toggleButtonVisibilityOnProcessing(false);
+            return;
+        }
+
         Map<String, Object> nestedData = new HashMap<>();
         nestedData.put("sold", quantity);
         nestedData.put("totalAmount", total);
         nestedData.put("executorUID", FirebaseAuth.getInstance().getCurrentUser().getUid());
         nestedData.put("finishedAt", FieldValue.serverTimestamp());
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("chargeMetadata", nestedData);
-
-        DocumentReference sellerEvent = db.document("sellers/" + uid + "/events/" + eventUID);
-        sellerEvent.update(data).addOnSuccessListener(documentReference -> {
-            Log.d(TAG, "onSuccess: Event amount due collected successfully");
+        CollectionReference paymentReceiptsCollection = db.collection("sellers/" + uid + "/events/" + eventUID + "/paymentReceipts");
+        paymentReceiptsCollection.add(nestedData).addOnSuccessListener(documentReference -> {
+            Log.d(TAG, "onSuccess: Payment receipt pushed successfully");
             setResult(RESULT_OK);
             finish();
         }).addOnFailureListener(e -> {
-            Log.d(TAG, "onFailure: Error adding receipt.");
+            Log.d(TAG, "onFailure: Error adding payment receipt.");
             toggleButtonVisibilityOnProcessing(false);
         });
     }
