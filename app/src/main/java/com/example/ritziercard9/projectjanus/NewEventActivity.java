@@ -240,35 +240,29 @@ public class NewEventActivity extends AppCompatActivity {
     }
 
     private void uploadImage(String uid, Map<String, Object> data, String band, String dateString) {
-        StorageReference storageRef = storage.getReference().child(uid + "/" + resultUri.getLastPathSegment());
+        StorageReference storageRef = storage.getReference().child("events/" + uid + "/" + resultUri.getLastPathSegment());
         Log.d(TAG, "last path from image:" + resultUri.getLastPathSegment());
 
-        storageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                croppedImageUrl = taskSnapshot.getDownloadUrl().toString();
-                Log.d(TAG, "event image uploaded successfully:" + croppedImageUrl);
+        storageRef.putFile(resultUri).addOnSuccessListener(taskSnapshot -> {
+            croppedImageUrl = taskSnapshot.getDownloadUrl().toString();
+            Log.d(TAG, "event image uploaded successfully:" + croppedImageUrl);
 
-                data.put("image", croppedImageUrl);
+            data.put("image", croppedImageUrl);
 
-                eventsCollection.add(data).addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
-                    Intent intent = new Intent();
-                    intent.putExtra("title", band);
-                    intent.putExtra("date", dateString);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }).addOnFailureListener(e -> {
-                    Log.d(TAG, "onFailure: Error adding receipt.");
-                    toggleButtonVisibilityOnProcessing(false);
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "event image upload ERROR:" + e.getMessage());
+            eventsCollection.add(data).addOnSuccessListener(documentReference -> {
+                Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
+                Intent intent = new Intent();
+                intent.putExtra("title", band);
+                intent.putExtra("date", dateString);
+                setResult(RESULT_OK, intent);
+                finish();
+            }).addOnFailureListener(e -> {
+                Log.d(TAG, "onFailure: Error adding receipt.");
                 toggleButtonVisibilityOnProcessing(false);
-            }
+            });
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "event image upload ERROR:" + e.getMessage());
+            toggleButtonVisibilityOnProcessing(false);
         });
 
     }

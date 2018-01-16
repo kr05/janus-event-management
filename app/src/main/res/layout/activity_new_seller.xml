@@ -29,18 +29,20 @@
         android:text="Nombre de tienda"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newSellerToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/newSellerImage" />
 
     <EditText
         android:id="@+id/newSellerName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:backgroundTint="@color/textColor"
         android:ems="10"
         android:inputType="textPersonName"
         android:textColor="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sellerNameTitle" />
 
@@ -48,25 +50,26 @@
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="Telefono"
         android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newSellerName" />
+        app:layout_constraintBottom_toTopOf="@+id/newSellerPhone"
+        app:layout_constraintStart_toStartOf="@+id/newSellerPhone" />
 
     <EditText
         android:id="@+id/newSellerPhone"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:backgroundTint="@color/textColor"
         android:ems="10"
         android:inputType="phone"
         android:textColor="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
+        app:layout_constraintBottom_toBottomOf="@+id/newSellerEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newSellerEmail"
+        app:layout_constraintTop_toTopOf="@+id/newSellerEmail" />
 
     <TextView
         android:id="@+id/textView22"
@@ -74,41 +77,24 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Direccion/Ciudad"
+        android:text="Direccion"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newSellerPhone" />
+        app:layout_constraintTop_toBottomOf="@+id/newSellerName" />
 
-    <EditText
+    <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
         android:id="@+id/newSellerAddress"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="text"
-        android:textColor="@color/textColor"
-        app:layout_constraintEnd_toStartOf="@+id/newSellerCity"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-    <EditText
-        android:id="@+id/newSellerCity"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:backgroundTint="@color/textColor"
-        android:ems="10"
-        android:inputType="text|date"
         android:textColor="@color/textColor"
-        app:layout_constraintBottom_toBottomOf="@+id/newSellerAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/newSellerAddress"
-        app:layout_constraintTop_toTopOf="@+id/newSellerAddress" />
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView22"
+        app:pacv_googleMapsApiKey="AIzaSyC1UhVNiAgmhfSmIKwVru34lzulPQE49Ko" />
 
     <TextView
         android:id="@+id/textView23"
@@ -123,14 +109,16 @@
 
     <EditText
         android:id="@+id/newSellerEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:backgroundTint="@color/textColor"
         android:ems="10"
         android:inputType="textEmailAddress"
         android:textColor="@color/textColor"
+        app:layout_constraintEnd_toStartOf="@+id/newSellerPhone"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
@@ -171,5 +159,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/newSellerCancelButton"
         app:layout_constraintStart_toEndOf="@+id/newSellerSendButton" />
+
+    <ImageView
+        android:id="@+id/newSellerImage"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newSellerToolbar" />
+
+    <Button
+        android:id="@+id/newSellerAddImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/textColor"
+        android:drawableLeft="@drawable/ic_add_black_24dp"
+        android:drawablePadding="5dp"
+        android:drawableTint="@color/common_google_signin_btn_text_dark_focused"
+        android:onClick="onAddImageClick"
+        android:text="Agregar imagen"
+        app:layout_constraintBottom_toBottomOf="@+id/newSellerImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/newSellerImage"
+        app:layout_constraintTop_toTopOf="@+id/newSellerImage" />
 
 </android.support.constraint.ConstraintLayout>
