@@ -46,6 +46,7 @@ public class EventDetails extends AppCompatActivity {
     private TextView titleTextView;
     private TextView locationTextView;
     private TextView dateTextView;
+    private TextView remainingTicketsTextView;
     private ImageView detailsImageView;
     private Spinner ticketSpinner, quantitySpinner;
     private Query query;
@@ -54,7 +55,7 @@ public class EventDetails extends AppCompatActivity {
     private String sellerUid;
 
     private static final int ACTIVATE_TICKETS_REQUEST = 1;
-
+    private int remaining;
 
 
     @Override
@@ -79,6 +80,10 @@ public class EventDetails extends AppCompatActivity {
         ticketSpinner = findViewById(R.id.eventDetailsTicketSpinner);
         quantitySpinner = findViewById(R.id.eventDetailsQuantitySpinner);
         dateTextView = findViewById(R.id.eventDetailsDate);
+        remainingTicketsTextView = findViewById(R.id.eventDetailsRemainingTickets);
+
+        //Initializing value in order to prevent error if scan button is pressed before listeners finish updating.
+        remaining = 0;
 
     }
 
@@ -211,6 +216,18 @@ public class EventDetails extends AppCompatActivity {
         locationTextView.setText(data.get("location").toString());
         dateTextView.setText(data.get("date").toString());
 
+        if (data.get("assigned") != null) {
+            int sold = 0;
+            int assigned = ((Long) data.get("assigned")).intValue();
+            if (data.get("sold") != null) {
+                sold = ((Long) data.get("sold")).intValue();
+            }
+
+            remaining = assigned - sold;
+
+            remainingTicketsTextView.setText(String.valueOf(remaining));
+        }
+
         if (data.get("image") != null) {
             Glide.with(getApplicationContext())
                     .load(data.get("image").toString())
@@ -225,11 +242,21 @@ public class EventDetails extends AppCompatActivity {
             return;
         }
 
+        if (remaining <= 0) {
+            Snackbar.make(findViewById(R.id.eventDetailsContainer), "No hay boletos restantes.", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
         String ticketTitle = ticketSpinner.getSelectedItem().toString();
         String ticketQuantity = quantitySpinner.getSelectedItem().toString();
         Double ticketTotal = null;
         Double ticketPrice = null;
         String ticketUID = "";
+
+        if (remaining < Integer.parseInt(ticketQuantity)) {
+            Snackbar.make(findViewById(R.id.eventDetailsContainer), "No hay boletos suficientes para la compra.", Snackbar.LENGTH_LONG).show();
+            return;
+        }
 
         ListIterator<SingleTicket> iterator = options.getSnapshots().listIterator();
 

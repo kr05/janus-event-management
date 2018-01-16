@@ -126,9 +126,8 @@
         android:id="@+id/eventDetailsCategorySpinnerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="Categoria"
         android:textColor="@color/textColor"
         android:textSize="12sp"
@@ -170,5 +169,40 @@
         android:textColor="@color/textColor"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eventDetailsLocation" />
+
+    <View
+        android:id="@+id/thirdUnderline"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eventDetailsQuantitySpinner" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Boletos restantes:"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="@+id/eventDetailsRemainingTickets"
+        app:layout_constraintEnd_toStartOf="@+id/eventDetailsRemainingTickets"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="@+id/eventDetailsRemainingTickets" />
+
+    <TextView
+        android:id="@+id/eventDetailsRemainingTickets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="0"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toTopOf="@+id/floatingActionButton" />
 
 </android.support.constraint.ConstraintLayout>
