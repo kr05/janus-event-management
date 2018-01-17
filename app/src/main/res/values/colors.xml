@@ -16,5 +16,8 @@
     <color name="spinner_popup_background_color">#FF4F5B62</color>
     <color name="entryGreen">#2e7d32</color>
 
+    <color name="deactivatedRed">#d50000</color>
+
+
 
 </resources>

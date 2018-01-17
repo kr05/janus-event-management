@@ -21,12 +21,15 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Map;
+
 public class OrganizerMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SellersFragment.OnSellersFragmentInteractionListener, EventsFragment.OnEventsFragmentInteractionListener {
 
     private String selectedNav, name, email;
     private static final int NEW_EVENT_REQUEST = 10;
     private static final int NEW_SELLER_REQUEST = 20;
+    private static final int NEW_ENTRY_REQUEST = 30;
     private FirebaseAuth mAuth;
 
     @Override
@@ -81,6 +84,14 @@ public class OrganizerMainActivity extends AppCompatActivity
                     initTransaction.replace(R.id.organizer_fragment_container, sellersFragment);
                     initTransaction.commit();
                     break;
+                case "entry":
+                    getSupportActionBar().setTitle("Contro de acceso");
+                    selectedNav = selected;
+                    navigationView.setCheckedItem(R.id.nav_entry);
+                    EntryFragment entryFragment = EntryFragment.newInstance();
+                    initTransaction.replace(R.id.organizer_fragment_container, entryFragment);
+                    initTransaction.commit();
+                    break;
 //                case "access":
 //                    getSupportActionBar().setTitle("Control de acceso");
 //                    selectedNav = selected;
@@ -118,6 +129,9 @@ public class OrganizerMainActivity extends AppCompatActivity
                 } else if (selectedNav.equals("events")) {
                     Intent intent = new Intent(getApplicationContext(), NewEventActivity.class);
                     startActivityForResult(intent, NEW_EVENT_REQUEST);
+                } else if (selectedNav.equals("entry")) {
+                    Intent intent = new Intent(getApplicationContext(), NewEntryActivity.class);
+                    startActivityForResult(intent, NEW_ENTRY_REQUEST);
                 }
             }
         });
@@ -178,18 +192,13 @@ public class OrganizerMainActivity extends AppCompatActivity
             EventsFragment eventsFragment = EventsFragment.newInstance();
             fragmentTransaction.replace(R.id.organizer_fragment_container, eventsFragment);
             fragmentTransaction.commit();
+        } else if (id == R.id.nav_entry) {
+            selectedNav = "entry";
+            getSupportActionBar().setTitle("Control de Acceso");
+            EntryFragment entryFragment = EntryFragment.newInstance();
+            fragmentTransaction.replace(R.id.organizer_fragment_container, entryFragment);
+            fragmentTransaction.commit();
         }
-//        else if (id == R.id.nav_access) {
-//            selectedNav = "events";
-//            getSupportActionBar().setTitle("Control de acceso");
-//            Intent accessIntent= new Intent(this, ScannerEventsListActivity.class);
-//            startActivity(accessIntent);
-//        } else if (id == R.id.nav_tickets) {
-//            selectedNav = "events";
-//            getSupportActionBar().setTitle("Venta de boletos");
-//            Intent ticketsIntent = new Intent(this, EventsListActivity.class);
-//            startActivity(ticketsIntent);
-//        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -209,11 +218,25 @@ public class OrganizerMainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == NEW_EVENT_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                String name = data.getStringExtra("title");
-                Snackbar.make(findViewById(R.id.organizer_fragment_container), "El evento para " + name + " a sido creado.", Snackbar.LENGTH_LONG).show();
-            }
+        switch (requestCode) {
+            case NEW_EVENT_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("title");
+                    Snackbar.make(findViewById(R.id.organizer_fragment_container), "El evento para " + name + " a sido creado.", Snackbar.LENGTH_LONG).show();
+                }
+                break;
+            case NEW_ENTRY_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    Snackbar.make(findViewById(R.id.organizer_fragment_container), "La cuenta de acceso de control para " + name + " a sido creado.", Snackbar.LENGTH_LONG).show();
+                }
+                break;
+            case NEW_SELLER_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    Snackbar.make(findViewById(R.id.organizer_fragment_container), "La cuenta de vendedor para " + name + " a sido creado.", Snackbar.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 }

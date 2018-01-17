@@ -2,13 +2,12 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/organizerSellerDetailsContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ritziercard9.projectjanus.OrganizerSellerDetailsActivity">
+    tools:context="com.example.ritziercard9.projectjanus.OrganizerSingleEntryDetailsActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/organizerSellerDetailsToolbar"
+        android:id="@+id/organizerEntryDetailsToolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -21,7 +20,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView
-        android:id="@+id/organizerSellerDetailsImage"
+        android:id="@+id/organizerEntryDetailsImage"
         android:layout_width="0dp"
         android:layout_height="200dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,129 +29,92 @@
         app:srcCompat="@drawable/ic_image" />
 
     <TextView
-        android:id="@+id/organizerSellerDetailsName"
+        android:id="@+id/organizerEntryNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Nombre de la tienda"
+        android:text="Nombre"
         android:textColor="@color/textColor"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerSellerDetailsImage" />
+        app:layout_constraintTop_toBottomOf="@+id/organizerEntryDetailsImage" />
 
     <View
-        android:id="@+id/firstUnderline"
+        android:id="@+id/entryFirstUnderline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="@color/textColor"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerSellerDetailsName" />
-
-    <View
-        android:id="@+id/secondUnderline"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerSellerDetailsAddress" />
+        app:layout_constraintTop_toBottomOf="@+id/organizerEntryNameTextView" />
 
     <TextView
-        android:id="@+id/organizerSellerDetailsAddress"
+        android:id="@+id/organizerEntryEmailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Direccion"
+        android:text="Correo electronico"
         android:textColor="@color/textColor"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstUnderline" />
+        app:layout_constraintTop_toBottomOf="@+id/entryFirstUnderline" />
+
+    <View
+        android:id="@+id/entrySecondUnderline"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/textColor"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/organizerEntryEmailTextView" />
 
     <TextView
-        android:id="@+id/organizerSellerDetailsPhone"
+        android:id="@+id/organizerEntryPhoneTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Telefono"
         android:textColor="@color/textColor"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/secondUnderline" />
+        app:layout_constraintTop_toBottomOf="@+id/entrySecondUnderline" />
 
     <View
-        android:id="@+id/thirdUnderline"
+        android:id="@+id/entryThirdUnderline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="@color/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerSellerDetailsPhone" />
-
-    <TextView
-        android:id="@+id/organizerSellerDetailsEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Correo electronico"
-        android:textColor="@color/textColor"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/thirdUnderline" />
-
-    <View
-        android:id="@+id/sellerDetailsFourthUnderline"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizerSellerDetailsEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/organizerEntryPhoneTextView" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/organizerSellerDetailsEventsRecyclerView"
+        android:id="@+id/organizerEntryRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sellerDetailsFourthUnderline"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/entryThirdUnderline" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/organizerEventDetailsFAB"
+        android:id="@+id/organizerEntryDetailsFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:clickable="true"
-        android:onClick="onOrganizerSellerDetailsFabClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:onClick="onAssignEventToEntryClick"/>
 
     <TextView
-        android:id="@+id/organizerSellerDetailsEmptyEventsText"
+        android:id="@+id/organizerEntryDetailsEmptyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -163,10 +125,9 @@
         android:textColor="@color/textColor"
         android:textSize="16sp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/organizerSellerDetailsEventsRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/organizerEntryRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sellerDetailsFourthUnderline" />
-
+        app:layout_constraintTop_toBottomOf="@+id/entryThirdUnderline" />
 
 </android.support.constraint.ConstraintLayout>

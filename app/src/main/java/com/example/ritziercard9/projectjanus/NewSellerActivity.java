@@ -165,13 +165,13 @@ public class NewSellerActivity extends AppCompatActivity {
         }
 
         if (user == null) {
-            Snackbar.make(findViewById(R.id.newEventContainer), "No se pudo validar el usario. Por favor inicie su sesio de nuevo.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.newSellerContainer), "No se pudo validar el usario. Por favor inicie su sesio de nuevo.", Snackbar.LENGTH_LONG).show();
             toggleButtonVisibilityOnProcessing(false);
             return;
         }
 
         if (resultUri == null) {
-            Snackbar.make(findViewById(R.id.newEventContainer), "Por favor agregue una imagen.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.newSellerContainer), "Por favor agregue una imagen.", Snackbar.LENGTH_LONG).show();
             toggleButtonVisibilityOnProcessing(false);
             return;
         }
@@ -196,7 +196,7 @@ public class NewSellerActivity extends AppCompatActivity {
             data.put("image", croppedImageUrl);
 
             sellersCollection.add(data).addOnSuccessListener(documentReference -> {
-                Log.d(TAG, "onSuccess: Receipt added successfully with ID:" + documentReference.getId());
+                Log.d(TAG, "onSuccess: Seller added successfully with ID:" + documentReference.getId());
                 Intent intent = new Intent();
                 intent.putExtra("name", name);
                 setResult(RESULT_OK, intent);
