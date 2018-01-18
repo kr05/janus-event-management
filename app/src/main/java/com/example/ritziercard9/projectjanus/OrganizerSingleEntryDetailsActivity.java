@@ -16,6 +16,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -107,9 +108,16 @@ public class OrganizerSingleEntryDetailsActivity extends AppCompatActivity {
             @Override
             public void onBindViewHolder(OrganizerSingleEntryDetailsActivity.EventHolder holder, int position, SingleEntryEvent model) {
                 holder.title.setText(model.getTitle());
-                holder.location.setText(model.getAddress());
-                holder.date.setText(model.getDate());
-                holder.activeSwitch.setChecked(!model.isActive());
+                holder.date.setText(model.getLocation());
+                holder.location.setText(model.getDate());
+                holder.activeSwitch.setChecked(model.isActive());
+
+                holder.activeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        options.getSnapshots().getSnapshot(position).getReference().update("active", isChecked);
+                    }
+                });
 
                 if (!TextUtils.isEmpty(model.getImage())) {
                     Glide.with(getApplicationContext())
@@ -227,6 +235,9 @@ public class OrganizerSingleEntryDetailsActivity extends AppCompatActivity {
     }
 
     public void onAssignEventToEntryClick(View view) {
+        Intent intent = new Intent(this, EntryAssignEventActivity.class);
+        intent.putExtra("uid", uid);
+        startActivityForResult(intent, ENTRY_ASSIGN_EVENT_REQUEST);
     }
 
 

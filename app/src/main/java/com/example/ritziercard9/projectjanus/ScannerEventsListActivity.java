@@ -33,9 +33,13 @@ public class ScannerEventsListActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;
+    private String entryUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG, "Starting ScannerEventsList onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner_events_list);
 
@@ -44,11 +48,21 @@ public class ScannerEventsListActivity extends AppCompatActivity {
         //myToolbar.setTitle("Detalles del evento");
         setSupportActionBar(myToolbar);
 
-        Query query = db.collection("events").orderBy("title");
+        String queryString = null;
+
+        if (getIntent().getExtras() != null) {
+            entryUID = getIntent().getStringExtra("entryUID");
+            queryString = "accessControl/" + entryUID + "/events";
+        }
+
+        Log.d(TAG, "query string:" + queryString);
+
+        // TODO: 1/17/2018 protect against null query string
+        Query query = db.collection(queryString).whereEqualTo("active", true).orderBy("title");
 
         // Configure recycler adapter options:
-        FirestoreRecyclerOptions<SingleEvent> options = new FirestoreRecyclerOptions.Builder<SingleEvent>()
-                .setQuery(query, SingleEvent.class)
+        FirestoreRecyclerOptions<SingleEntryEvent> options = new FirestoreRecyclerOptions.Builder<SingleEntryEvent>()
+                .setQuery(query, SingleEntryEvent.class)
                 .build();
 
         mRecyclerView = findViewById(R.id.scannerEventsListRecyclerView);
@@ -64,9 +78,9 @@ public class ScannerEventsListActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
 
         // specify an adapter
-        mAdapter = new FirestoreRecyclerAdapter<SingleEvent, ScannerEventsListActivity.EventHolder>(options) {
+        mAdapter = new FirestoreRecyclerAdapter<SingleEntryEvent, ScannerEventsListActivity.EventHolder>(options) {
             @Override
-            public void onBindViewHolder(ScannerEventsListActivity.EventHolder holder, int position, SingleEvent model) {
+            public void onBindViewHolder(ScannerEventsListActivity.EventHolder holder, int position, SingleEntryEvent model) {
                 holder.title.setText(model.getTitle());
                 holder.location.setText(model.getLocation());
                 holder.details.setText(model.getDetails());
@@ -82,6 +96,7 @@ public class ScannerEventsListActivity extends AppCompatActivity {
                     DocumentSnapshot doc = getSnapshots().getSnapshot(position);
                     Intent intent = new Intent(getApplicationContext(), ScannerEventDetailsActivity.class);
                     intent.putExtra("UID", doc.getId());
+                    intent.putExtra("entryUID", entryUID);
                     startActivity(intent);
                 });
             }

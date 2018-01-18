@@ -9,19 +9,28 @@ import java.util.Date;
  */
 
 public class SingleEntryEvent {
-    private String title, address, date, image;
+    private String title, location, date, image, details;
     private boolean isActive;
     private Date mTimestamp;
 
     public SingleEntryEvent() {
     }
 
-    public SingleEntryEvent(String title, String address, String date, String image, boolean isActive) {
+    public SingleEntryEvent(String title, String location, String date, String image, String details, boolean isActive) {
         this.title = title;
-        this.address = address;
+        this.location = location;
         this.date = date;
         this.image = image;
         this.isActive = isActive;
+        this.details = details;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public String getTitle() {
@@ -32,12 +41,12 @@ public class SingleEntryEvent {
         this.title = title;
     }
 
-    public String getAddress() {
-        return address;
+    public String getLocation() {
+        return location;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getDate() {

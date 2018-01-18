@@ -93,7 +93,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     if (payload.optBoolean("entry")) {
+                        String uid = user.getUid();
                         Intent intent = new Intent(this, ScannerEventsListActivity.class);
+                        intent.putExtra("entryUID", uid);
                         startActivity(intent);
                         finish();
                     }

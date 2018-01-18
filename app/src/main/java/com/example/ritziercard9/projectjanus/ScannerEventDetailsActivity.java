@@ -1,6 +1,8 @@
 package com.example.ritziercard9.projectjanus;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +26,7 @@ public class ScannerEventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "ScannerEventDetails";
     private TextView titleTextView, locationTextView, detailsTextView, totalCapacityTextView, soldTicketsTextView, checkedInTextView, dateTextView;
     private ImageView detailsImageView;
-    private String uid;
+    private String uid, entryUID;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -55,6 +57,16 @@ public class ScannerEventDetailsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onPrepareSupportNavigateUpTaskStack(@NonNull TaskStackBuilder builder) {
+        builder.editIntentAt(builder.getIntentCount() - 1).putExtra("entryUID", entryUID);
+    }
+
+    @Override
+    public boolean supportShouldUpRecreateTask(@NonNull Intent targetIntent) {
+        return true;
+    }
+
     public void onScannerEventDetailsFabClick(View view) {
         Intent intent = new Intent(this, ValidateTicketsActivity.class);
         intent.putExtra("UID", uid);
@@ -68,6 +80,7 @@ public class ScannerEventDetailsActivity extends AppCompatActivity {
         }
 
         uid = bundle.getString("UID");
+        entryUID = bundle.getString("entryUID");
 
         final DocumentReference docRef = db.document("events/" + uid);
         docRef.addSnapshotListener((snapshot, e) -> {

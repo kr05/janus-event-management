@@ -72,11 +72,15 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".OrganizerSingleEntryDetailsActivity"
-            android:parentActivityName=".OrganizerMainActivity"/>
+            android:parentActivityName=".OrganizerMainActivity" />
         <activity
             android:name=".NewEntryActivity"
             android:label="Crear control de acceso"
-            android:parentActivityName=".OrganizerMainActivity"/>
+            android:parentActivityName=".OrganizerMainActivity" />
+        <activity
+            android:name=".EntryAssignEventActivity"
+            android:label="Asignar evento"
+            android:parentActivityName=".OrganizerSingleEntryDetailsActivity"/>
     </application>
 
 </manifest>
